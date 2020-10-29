@@ -3,6 +3,7 @@ import os
 import random
 import urllib.request
 import zipfile
+from collections import defaultdict
 from pathlib import Path
 from typing import List, NamedTuple
 
@@ -12,6 +13,7 @@ dereko_zip = data_dir / 'dereko-2014.zip'
 dereko_txt = data_dir / 'DeReKo-2014-II-MainArchive-STT.100000.freq'
 diceware_dereko_txt = data_dir / 'diceware-dereko.txt'
 diceware_dereko_json = data_dir / 'diceware-dereko.json'
+diceware_dereko_js = data_dir / 'diceware-dereko.js'
 
 pos_filter = {'NN', 'VVFIN', 'VVINF', 'ADJD', 'ADV'}
 min_len = 3
@@ -49,7 +51,6 @@ def parse_dereko() -> List[Token]:
 
 
 def get_dereko_tokens() -> List[Token]:
-    # DeReKo
     if not dereko_zip.exists():
         download_dereko()
     if not dereko_txt.exists():
@@ -58,16 +59,27 @@ def get_dereko_tokens() -> List[Token]:
     return tokens
 
 
-def filter_tokens(tokens: List[Token]) -> List[str]:
-    # TODO maybe use only the most frequent form of a token instead of all variants
-
+def filter_tokens(tokens: List[Token], limit=6**5) -> List[str]:
+    # only include tokens that have the specified POS tags
     tokens_pos = [t for t in tokens if t.pos in pos_filter]
-    tokens_byfreq = sorted(tokens_pos, key=lambda t: t.frequency, reverse=True)
-    plain = list(dict.fromkeys(t.token.lower() for t in tokens_byfreq))
-    plain_lengths = [s for s in plain if min_len <= len(s) <= max_len]
-    plain_no_umlaut = [s for s in plain_lengths if s.isascii() and s.isalpha()]
-    plain_not_naughty = [s for s in plain_no_umlaut if all(x not in s for x in naughty)]
-    return plain_not_naughty
+    # don't use tokens that are too short or too long
+    tokens_len = [t for t in tokens_pos if min_len <= len(t.token) <= max_len]
+    # avoid umlauts (äöü) and other non-ascii stuff as well as punctuation
+    tokens_no_umlaut = [t for t in tokens_len if t.token.isascii() and t.token.isalpha()]
+    # filter out sensitive tokens (there are only few among the most frequent words)
+    tokens_not_naughty = [t for t in tokens_no_umlaut if
+                          all(x not in t.token.lower() for x in naughty)]
+    # sort tokens by frequency and group them by their common normalized form
+    tokens_byfreq = sorted(tokens_not_naughty, key=lambda t: t.frequency, reverse=True)
+    group_normalized = defaultdict(list)
+    for token in tokens_byfreq:
+        group_normalized[token.normalized.lower()].append(token)
+    # only keep the most frequently used true form of every normalized form
+    normalized_first = [tokens[0] for tokens in group_normalized.values()]
+    normalized_sorted = sorted(normalized_first, key=lambda t: t.frequency, reverse=True)
+    # convert token objects to lower-case plaintext
+    plain = list(dict.fromkeys(t.token.lower() for t in normalized_sorted))
+    return plain[:limit]
 
 
 def count_to_dice(n, num_dice=5) -> int:
@@ -82,22 +94,27 @@ def count_to_dice(n, num_dice=5) -> int:
 
 
 def generate_diceware_txt(tokens: List[str]):
-    if len(tokens) < 6**5:
-        raise ValueError(f"Too few tokens, need at least 6^5, but got {len(tokens)}")
-    selection = sorted(tokens[:6**5])
+    assert len(tokens) == 6**5
     with diceware_dereko_txt.open('w') as fp:
-        for i, token in enumerate(selection):
+        for i, token in enumerate(sorted(tokens)):
             dice = count_to_dice(i)
             fp.write(f'{dice}\t{token}\n')
 
 
 def generate_diceware_json(tokens: List[str]):
-    if len(tokens) < 6**5:
-        raise ValueError(f"Too few tokens, need at least 6^5, but got {len(tokens)}")
-    selection = sorted(tokens[:6**5])
-    dice_mapping = {count_to_dice(i): token for i, token in enumerate(selection)}
+    assert len(tokens) == 6**5
+    dice_mapping = {count_to_dice(i): token for i, token in enumerate(sorted(tokens))}
     with diceware_dereko_json.open('w') as fp:
         json.dump(dice_mapping, fp, sort_keys=True, ensure_ascii=False, indent=2)
+
+
+def generate_diceware_js(tokens: List[str]):
+    assert len(tokens) == 6**5
+    with diceware_dereko_js.open('w') as fp:
+        fp.write("var german = {\n")
+        dict_lines = [f'  {count_to_dice(i)}: "{token}"' for i, token in enumerate(sorted(tokens))]
+        fp.write(',\n'.join(dict_lines))
+        fp.write("\n}\n")
 
 
 def test_selection(tokens: List[str], words=6, repeat=20):
@@ -112,6 +129,7 @@ def main():
     filtered = filter_tokens(tokens)
     generate_diceware_txt(filtered)
     generate_diceware_json(filtered)
+    generate_diceware_js(filtered)
     test_selection(filtered)
 
 
