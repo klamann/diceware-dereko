@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import urllib.request
@@ -10,6 +11,7 @@ dereko_url = "http://www1.ids-mannheim.de/fileadmin/kl/derewo/DeReKo-2014-II-Mai
 dereko_zip = data_dir / 'dereko-2014.zip'
 dereko_txt = data_dir / 'DeReKo-2014-II-MainArchive-STT.100000.freq'
 diceware_dereko_txt = data_dir / 'diceware-dereko.txt'
+diceware_dereko_json = data_dir / 'diceware-dereko.json'
 
 pos_filter = {'NN', 'VVFIN', 'VVINF', 'ADJD', 'ADV'}
 min_len = 3
@@ -68,16 +70,15 @@ def filter_tokens(tokens: List[Token]) -> List[str]:
     return plain_not_naughty
 
 
-def count_to_dice(n, num_dice=5) -> List[int]:
-    if n == 0:
-        return [1] * num_dice
+def count_to_dice(n, num_dice=5) -> int:
     digits = []
     while n:
         digits.append((n % 6) + 1)
         n //= 6
     if len(digits) < num_dice:
         digits += [1] * (num_dice - len(digits))
-    return digits[::-1]
+    digite_str = ''.join(str(i) for i in digits[::-1])
+    return int(digite_str)
 
 
 def generate_diceware_txt(tokens: List[str]):
@@ -87,7 +88,16 @@ def generate_diceware_txt(tokens: List[str]):
     with diceware_dereko_txt.open('w') as fp:
         for i, token in enumerate(selection):
             dice = count_to_dice(i)
-            fp.write(f'{"".join(str(i) for i in dice)}\t{token}\n')
+            fp.write(f'{dice}\t{token}\n')
+
+
+def generate_diceware_json(tokens: List[str]):
+    if len(tokens) < 6**5:
+        raise ValueError(f"Too few tokens, need at least 6^5, but got {len(tokens)}")
+    selection = sorted(tokens[:6**5])
+    dice_mapping = {count_to_dice(i): token for i, token in enumerate(selection)}
+    with diceware_dereko_json.open('w') as fp:
+        json.dump(dice_mapping, fp, sort_keys=True, ensure_ascii=False, indent=2)
 
 
 def test_selection(tokens: List[str], words=6, repeat=20):
@@ -101,6 +111,7 @@ def main():
     tokens = get_dereko_tokens()
     filtered = filter_tokens(tokens)
     generate_diceware_txt(filtered)
+    generate_diceware_json(filtered)
     test_selection(filtered)
 
 
