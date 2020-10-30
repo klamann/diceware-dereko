@@ -121,7 +121,7 @@ def test_selection(tokens: List[str], words=6, repeat=20):
     selection = sorted(tokens[:6 ** 5])
     for i in range(repeat):
         choice = [random.choice(selection) for _ in range(words)]
-        print(choice)
+        print("* " + ", ".join(choice))
 
 
 def main():
