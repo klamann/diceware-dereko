@@ -8,8 +8,8 @@ This list is intended to be an alternative to the popular German word list that 
 
 This word list was compiled from the [DeReKo 2014](https://www1.ids-mannheim.de/kl/projekte/methoden/derewo.html) term frequency list which is provided by the [Leibniz-Institut für Deutsche Sprache](https://www1.ids-mannheim.de/) under a Creative Commons License ([CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)). Here is the word list in plain text and json format:
 
-* [`diceware-dereko.txt`](./diceware-dereko.txt) (~110 kb)
-* [`diceware-dereko.json`](./diceware-dereko.json) (~170 kb)
+* [`diceware-dereko.txt`](https://raw.githubusercontent.com/klamann/diceware-dereko/master/diceware-dereko.txt) (~110 kb)
+* [`diceware-dereko.json`](https://raw.githubusercontent.com/klamann/diceware-dereko/master/diceware-dereko.json) (~170 kb)
 
 *Copyright notice: these documents are derived from work of the Leibniz-Institut für Deutsche Sprache, which was published under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/). If the compilation of this word list can be seen as fair dealing or fair use in your jurisdiction, then I hereby release it to the public domain. Otherwise the restrictions of the original CC BY-NC 3.0 license apply. In any case, I waive any copyright for my part of the work (see [LICENSE](./LICENSE)).*
 
