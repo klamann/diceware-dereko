@@ -16,7 +16,7 @@ diceware_dereko_json = data_dir / 'diceware-dereko.json'
 diceware_dereko_js = data_dir / 'diceware-dereko.js'
 
 pos_filter_base = {'NN', 'VVFIN', 'VVINF', 'ADJD', 'ADV', 'VMFIN', 'VVIMP'}
-pos_filter_ext = pos_filter_base | {'ADJA', 'APPR', 'PTKVZ', 'PIAT', 'PROAV', 'PPOSAT'}
+pos_filter_ext = pos_filter_base | {'NE', 'ADJA', 'APPR', 'PTKVZ', 'PIAT', 'PROAV', 'PPOSAT'}
 naughty = ['sex', 'nazi', 'hure']
 
 # note: please adjust these parameters to generate different diceware lists
@@ -136,9 +136,9 @@ def export_diceware_js(tokens: List[str], num_dice=5):
 def export_diceware(tokens: List[str], num_dice=5):
     if len(tokens) != 6 ** num_dice:
         raise ValueError(f"need exactly 6^{num_dice} ({6 ** num_dice}) tokens")
-    export_diceware_txt(tokens)
-    export_diceware_json(tokens)
-    export_diceware_js(tokens)
+    export_diceware_txt(tokens, num_dice)
+    export_diceware_json(tokens, num_dice)
+    export_diceware_js(tokens, num_dice)
 
 
 def generate_diceware_5():
@@ -152,7 +152,7 @@ def generate_diceware_6():
     tokens = get_dereko_tokens()
     return filter_tokens(
         tokens, limit=6**6, pos_filter=pos_filter_ext, min_len=min_word_len,
-        max_len=18, filter_special=True, group_forms=False)
+        max_len=13, filter_special=True, group_forms=False)
 
 
 def print_random(tokens: List[str], words=6, repeat=20):
