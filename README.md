@@ -13,16 +13,24 @@ This word list was compiled from the [DeReKo 2014](https://www1.ids-mannheim.de/
 
 *Copyright notice: these documents are derived from work of the Leibniz-Institut für Deutsche Sprache, which was published under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/). If the compilation of this word list can be seen as fair dealing or fair use in your jurisdiction, then I hereby release it to the public domain. Otherwise the restrictions of the original CC BY-NC 3.0 license apply. In any case, I waive any copyright for my part of the work (see [LICENSE](./LICENSE)).*
 
+### Alternative Versions
+
+The main list contains words with up to 10 characters. As an alternative, another list with words that are up to 8 characters long is provided. This should help to generate shorter passphrases without reducing the lower bound for the entropy of each passphrase, which would be more user friendly, but the list may contain a few terms that are a bit more unusual.
+
+You may find the list in the [alternatives folder](./alternatives). The same licensing conditions apply.
+
 ## Selection Process
 
 The words in this list were carefully selected from a compilation of the most frequently used word forms in German writing, at least according to the [DeReKo 2014](https://www1.ids-mannheim.de/kl/projekte/methoden/derewo.html) word frequency list. Before the final selection was made, some more filters were applied to this list:
 
-* only include words that match the following [POS tags](https://en.wikipedia.org/wiki/Part-of-speech_tagging): NN, VVFIN, VVINF, ADJD, ADV. These are nouns, adjectives, adverbs and certain verb forms. We exclude named entities and a lot of terms that are important for the language but have no meaning on their own.
-* only include words that consist of 3 to 10 characters (less typing, yay).
+* only include words that match the following [POS tags](https://en.wikipedia.org/wiki/Part-of-speech_tagging): NN, VVFIN, VVINF, ADJD, ADV, VMFIN, VVIMP. These are nouns, adjectives, adverbs and certain verb forms. We exclude named entities, numbers and some other stuff.
+* only include words that consist of 3 to 10 characters (there is [another list](./alternatives) with only 3 to 8 characters).
 * avoid characters that are common in German but often not allowed in passwords, like [umlauts](https://en.wikipedia.org/wiki/Umlaut_(linguistics)), [eszett](https://en.wikipedia.org/wiki/%C3%9F) and all kinds of punctuation. Instead of using transliterations to ASCII (e.g. "über" -> "ueber") that might feel non-intuitive for native speakers, these tokens are simply removed.
 * filter out certain sensitive terms. Germans don't curse that much in written publications, so there's not much to do here, but obviously we have to deal with Nazis 🙄
 * group all tokens by their normalized forms and only include the most frequently used instance of each form. This helps to avoid redundancy and removes less memorable inflexions of many words from the list.
 * store all words in lowercase
+
+There is also an option to generate a wordlist for 6 dice (instead of 5) with a total of 46656 tokens which deviates from this process. Because this list contains way more redundant and unusual terms, it is not provided in this repo and it is not recommended to use it to create passphrases, but the code to compile the list is there.
 
 ## Examples
 
