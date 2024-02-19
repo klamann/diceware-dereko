@@ -1,5 +1,7 @@
 # German Diceware Word List
 
+> Try it online at [diceware.rempe.us](https://diceware.rempe.us/#german-dereko)
+
 A decent [Diceware](https://en.wikipedia.org/wiki/Diceware) word list in German, based on [DeReKo](https://www1.ids-mannheim.de/kl/projekte/methoden/derewo.html) data. Contains 6^5 (7776) words, selected from the most frequently used word forms in the German language, filtered for usability in a [passphrase](https://en.wikipedia.org/wiki/Passphrase), e.g. no use of umlauts or very long words.
 
 This list is intended to be an alternative to the popular German word list that can be found on [The Diceware Passphrase Home Page](https://theworld.com/~reinhold/diceware.html), which comes with a few major flaws: many two-letter strings that are no German words, lots of numbers and special characters, misspelled words and highly unusual words and word forms. This word list only consists of actual German words that are in common use and (hopefully) easier to remember. Because [life is too short to remember unnecessarily complex passwords](https://xkcd.com/936/).
